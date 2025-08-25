@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,6 +26,7 @@ public class UserAdapter implements UserRepository {
     private final RoleMapper roleMapper;
 
     @Override
+    @Transactional
     public Mono<User> save(User user) {
         log.info("Saving user entity for email: {}", user.getEmail());
         return userRepository.save(userMapper.toEntity(user))

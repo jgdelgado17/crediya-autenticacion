@@ -1,4 +1,4 @@
-package co.com.crediya.autenticacion.api.handler;
+package co.com.crediya.autenticacion.api.exceptionHandler;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
     public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes,
-                                          WebProperties webProperties, // <--- Se inyecta la clase completa
+                                          WebProperties webProperties,
                                           ApplicationContext applicationContext,
                                           ServerCodecConfigurer configurer) {
         super(errorAttributes, webProperties.getResources(), applicationContext); // <--- Se accede a getResources()
