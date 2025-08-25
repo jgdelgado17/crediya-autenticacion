@@ -4,6 +4,10 @@ import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,12 +22,19 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/v1/usuarios")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "Endpoints for managing users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserUseCase userUseCase;
     private final RoleRepository roleRepository;
 
     @PostMapping
+    @Operation(summary = "Create User", description = "Creates a new user in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public Mono<ResponseEntity<User>> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Request received to create user: {}", userRequest.getEmail());
 
