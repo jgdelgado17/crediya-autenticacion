@@ -10,7 +10,7 @@ public class UserMapper {
     public UserEntity toEntity(User user) {
         return UserEntity.builder()
                 .idUser(user.getIdUser())
-                .name(user.getName())
+                .names(user.getName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .documentNumber(user.getDocumentNumber())
@@ -23,7 +23,7 @@ public class UserMapper {
     public User toModel(UserEntity userEntity, Role role) {
         return User.builder()
                 .idUser(userEntity.getIdUser())
-                .name(userEntity.getName())
+                .name(userEntity.getNames())
                 .lastName(userEntity.getLastName())
                 .email(userEntity.getEmail())
                 .documentNumber(userEntity.getDocumentNumber())

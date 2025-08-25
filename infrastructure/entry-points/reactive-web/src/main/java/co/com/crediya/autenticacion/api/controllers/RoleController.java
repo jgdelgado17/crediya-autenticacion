@@ -18,7 +18,6 @@ public class RoleController {
 
     @PostMapping
     public Mono<ResponseEntity<Role>> createRole(@RequestBody Role role) {
-        System.out.println("Role : " + role.getNames());
         return roleUseCase.createRole(role)
                 .map(ResponseEntity::ok)
                 .onErrorResume(Mono::error)

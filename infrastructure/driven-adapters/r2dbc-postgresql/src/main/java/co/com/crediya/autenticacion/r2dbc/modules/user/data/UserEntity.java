@@ -12,12 +12,12 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
     @Id
     @Column("id_user")
     private Integer idUser;
-    private String name;
+    private String names;
     @Column("last_name")
     private String lastName;
     private String email;

@@ -10,6 +10,7 @@ public class RoleMapper {
         return RoleEntity.builder()
                 .id(role.getId())
                 .names(role.getNames())
+                .description(role.getDescription())
                 .build();
     }
 
@@ -17,6 +18,7 @@ public class RoleMapper {
         return Role.builder()
                 .id(entity.getId())
                 .names(entity.getNames())
+                .description(entity.getDescription())
                 .build();
     }
 }
