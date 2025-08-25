@@ -25,6 +25,12 @@ public class UserAdapter implements UserRepository {
     private final RoleRepositoryCrud roleRepository;
     private final RoleMapper roleMapper;
 
+    /**
+     * Saves a user entity.
+     *
+     * @param user the user to save
+     * @return a mono emitting the saved user
+     */
     @Override
     @Transactional
     public Mono<User> save(User user) {
@@ -35,6 +41,12 @@ public class UserAdapter implements UserRepository {
                 .doOnError(e -> log.error("Failed to save user entity for email {}: {}", user.getEmail(), e.getMessage()));
     }
 
+    /**
+     * Finds a user by their email.
+     *
+     * @param email the email of the user to find
+     * @return a mono emitting the found user, or empty if not found
+     */
     @Override
     public Mono<User> findByEmail(String email) {
         log.info("Finding user entity by email: {}", email);

@@ -23,6 +23,12 @@ public class RoleAdapter
         this.repository = repository;
     }
 
+    /**
+     * Saves a role entity.
+     *
+     * @param role the role to save
+     * @return a mono emitting the saved role
+     */
     @Override
     public Mono<Role> save(Role role) {
         log.info("Saving role entity: {}", role.getNames());
@@ -31,6 +37,12 @@ public class RoleAdapter
                 .doOnError(e -> log.error("Error saving role entity: {}", e.getMessage()));
     }
 
+    /**
+     * Finds a role by its name.
+     *
+     * @param name the name of the role to find
+     * @return a mono emitting the found role, or empty if not found
+     */
     @Override
     public Mono<Role> findByName(String name) {
         log.info("Finding role entity by name: {}", name);

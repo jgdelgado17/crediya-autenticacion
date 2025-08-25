@@ -9,6 +9,14 @@ import reactor.core.publisher.Mono;
 public class RoleUseCase {
     private final RoleRepository roleRepository;
 
+    /**
+     * Creates a new role, given a role with name.
+     *
+     * <p>If a role with the given name already exists, the method will return an error.
+     *
+     * @param role the role to create
+     * @return a mono emitting the created role
+     */
     public Mono<Role> createRole(Role role) {
         return RoleValidator.validate(role)
                 .flatMap(validRole ->

@@ -7,6 +7,15 @@ import co.com.crediya.autenticacion.model.shared.exception.ErrorMessages;
 import reactor.core.publisher.Mono;
 
 public class RoleValidator {
+
+    /**
+     * Validates the given role.
+     *
+     * <p>The role name must not be null or empty, and must be a valid RoleEnum value.
+     *
+     * @param role the role to validate
+     * @return a mono emitting the validated role, or an error if validation fails
+     */
     public static Mono<Role> validate(Role role) {
         if (role.getNames() == null || role.getNames().trim().isEmpty()) {
             return Mono.error(new IllegalArgumentException(ErrorMessages.requiredField("roleName")));
