@@ -1,11 +1,14 @@
 package co.com.crediya.autenticacion.api.controllers;
 
+import co.com.crediya.autenticacion.api.dto.RoleRequest;
+import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +34,9 @@ public class RoleController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public Mono<ResponseEntity<Role>> createRole(@RequestBody Role role) {
-        log.info("Request received to create role: {}", role.getNames());
+    public Mono<ResponseEntity<Role>> createRole(@Valid @RequestBody RoleRequest roleRequest) {
+        log.info("Request received to create role: {}", roleRequest.getNames());
+        Role role = RoleDataMapper.toRole(roleRequest);
         return roleUseCase.createRole(role)
                 .map(ResponseEntity::ok)
                 .doOnSuccess(r -> log.info("Role created successfully: {}", role.getNames()))

@@ -1,6 +1,8 @@
 package co.com.crediya.autenticacion.api.controllers;
 
 import co.com.crediya.autenticacion.api.dto.UserRequest;
+import co.com.crediya.autenticacion.api.dto.UserResponse;
+import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
@@ -35,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public Mono<ResponseEntity<User>> createUser(@Valid @RequestBody UserRequest userRequest) {
+    public Mono<ResponseEntity<UserResponse>> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Request received to create user: {}", userRequest.getEmail());
 
         return roleRepository.findByName(userRequest.getRoleName())
@@ -45,19 +47,13 @@ public class UserController {
                     return Mono.error(new IllegalArgumentException("Role not found"));
                 }))
                 .flatMap(role -> {
-                    User userToCreate = User.builder()
-                            .name(userRequest.getName())
-                            .lastName(userRequest.getLastName())
-                            .email(userRequest.getEmail())
-                            .documentNumber(userRequest.getDocumentNumber())
-                            .phoneNumber(userRequest.getPhoneNumber())
-                            .baseSalary(userRequest.getBaseSalary())
-                            .role(role)
-                            .build();
+                    User userToCreate = UserDataMapper.toUser(userRequest);
+                    userToCreate.setRole(role);
 
                     return userUseCase.createUser(userToCreate)
                             .doOnSuccess(user -> log.info("User created successfully: {}", user.getEmail()))
                             .doOnError(e -> log.error("Failed to create user with email {}: {}", userRequest.getEmail(), e.getMessage()))
+                            .map(UserDataMapper::toUserResponse)
                             .map(ResponseEntity::ok);
                 })
                 .doOnError(e -> log.error("An error occurred during user creation: {}", e.getMessage()))

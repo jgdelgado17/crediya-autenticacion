@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
+import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -52,6 +53,9 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         } else if (error instanceof IllegalArgumentException) {
             httpStatus = HttpStatus.BAD_REQUEST;
             errorMessage = error.getMessage();
+        } else if (error instanceof ServerWebInputException) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            errorMessage = "Invalid JSON format or data type mismatch. Please check your input.";
         } /*else if (error instanceof DataAccessResourceFailureException) {
             httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
             errorMessage = "Database service is unavailable. Please try again later.";
