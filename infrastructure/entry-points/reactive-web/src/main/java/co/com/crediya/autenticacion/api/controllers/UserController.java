@@ -4,6 +4,7 @@ import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class UserController {
     private final RoleRepository roleRepository;
 
     @PostMapping
-    public Mono<ResponseEntity<User>> createUser(@RequestBody UserRequest userRequest) {
+    public Mono<ResponseEntity<User>> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("Request received to create user: {}", userRequest.getEmail());
 
         return roleRepository.findByName(userRequest.getRoleName())
