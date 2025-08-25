@@ -17,7 +17,7 @@ adapters:
     port: 5432
     username: "postgres"
     password: "postgres"
-    database: "crediya"
+    database: "crediya_autenticacion"
     schema: "public"
 management:
   endpoints:

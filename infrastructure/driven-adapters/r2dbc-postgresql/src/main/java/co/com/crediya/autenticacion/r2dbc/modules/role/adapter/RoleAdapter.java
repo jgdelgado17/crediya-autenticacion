@@ -26,7 +26,7 @@ public class RoleAdapter
 
     @Override
     public Mono<Role> findByName(String name) {
-        return repository.findByName(name)
+        return repository.findByNames(name)
                 .map(super::toEntity);
     }
 }

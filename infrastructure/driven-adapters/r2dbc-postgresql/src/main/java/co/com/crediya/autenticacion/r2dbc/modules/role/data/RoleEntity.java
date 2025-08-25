@@ -17,6 +17,6 @@ public class RoleEntity {
     @Id
     @Column("unique_id")
     private Integer id;
-    private String name;
+    private String names;
     private String description;
 }

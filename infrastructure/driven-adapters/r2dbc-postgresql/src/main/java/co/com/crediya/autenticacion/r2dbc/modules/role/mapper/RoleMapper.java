@@ -9,14 +9,14 @@ public class RoleMapper {
     public RoleEntity toEntity(Role role) {
         return RoleEntity.builder()
                 .id(role.getId())
-                .name(role.getName())
+                .names(role.getNames())
                 .build();
     }
 
     public Role toDomain(RoleEntity entity) {
         return Role.builder()
                 .id(entity.getId())
-                .name(entity.getName())
+                .names(entity.getNames())
                 .build();
     }
 }

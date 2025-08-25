@@ -8,12 +8,12 @@ import reactor.core.publisher.Mono;
 
 public class RoleValidator {
     public static Mono<Role> validate(Role role) {
-        if (role.getName() == null || role.getName().trim().isEmpty()) {
+        if (role.getNames() == null || role.getNames().trim().isEmpty()) {
             return Mono.error(new IllegalArgumentException(ErrorMessages.requiredField("roleName")));
         }
 
         try {
-            EnumUtils.fromString(RoleEnum.class, role.getName());
+            EnumUtils.fromString(RoleEnum.class, role.getNames());
         } catch (Exception e) {
             return Mono.error(e);
         }

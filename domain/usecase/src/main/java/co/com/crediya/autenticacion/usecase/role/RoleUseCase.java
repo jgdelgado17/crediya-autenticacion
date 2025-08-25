@@ -12,7 +12,7 @@ public class RoleUseCase {
     public Mono<Role> createRole(Role role) {
         return RoleValidator.validate(role)
                 .flatMap(validRole ->
-                        roleRepository.findByName(validRole.getName())
+                        roleRepository.findByName(validRole.getNames())
                                 .flatMap(existingRole ->
                                         Mono.error(new IllegalArgumentException("Role already exists")).cast(Role.class)
                                 )
