@@ -62,12 +62,12 @@ public class UserAdapter implements UserRepository {
     private Mono<User> buildUserModel(UserEntity userEntity) {
         log.debug("Building user model for user entity with ID: {}", userEntity.getIdUser());
         return roleRepository.findById(userEntity.getIdRole())
-                .doOnSuccess(roleEntity -> log.debug("Role entity found for user ID {}: {}", userEntity.getIdUser(), roleEntity.getNames()))
                 .switchIfEmpty(Mono.defer(() -> {
                     String errorMessage = ErrorMessages.notFoundMessage(Role.class, userEntity.getIdRole());
                     log.error("Role not found for user ID {}: {}", userEntity.getIdUser(), errorMessage);
                     return Mono.error(new IllegalArgumentException(errorMessage));
                 }))
+                .doOnSuccess(roleEntity -> log.debug("Role entity found for user ID {}: {}", userEntity.getIdUser(), roleEntity.getNames()))
                 .map(roleMapper::toDomain)
                 .map(role -> userMapper.toModel(userEntity, role))
                 .doOnSuccess(user -> log.debug("User model built successfully for user ID: {}", user.getIdUser()))
