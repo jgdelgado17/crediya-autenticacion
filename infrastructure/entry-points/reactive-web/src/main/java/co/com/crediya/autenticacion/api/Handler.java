@@ -4,8 +4,7 @@ import co.com.crediya.autenticacion.api.dto.RoleRequest;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
-import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
-import co.com.crediya.autenticacion.model.user.User;
+import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,11 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-//@Tag(name = "User", description = "Endpoints for managing users")
 public class Handler {
     private static final Logger log = LoggerFactory.getLogger(Handler.class);
     private final Validator validator;
     private final RoleUseCase roleUseCase;
     private final UserUseCase userUseCase;
-    private final RoleRepository roleRepository;
 
     public Mono<ServerResponse> createRole(ServerRequest request) {
         log.info("Request received to create role");
@@ -68,21 +65,15 @@ public class Handler {
                         throw new IllegalArgumentException(fullErrorMessage);
                     }
                 })
-                .flatMap(userRequest -> roleRepository.findByName(userRequest.getRoleName())
-                        .doOnSuccess(role -> log.info("Found role '{}' for user creation.", userRequest.getRoleName()))
-                        .switchIfEmpty(Mono.defer(() -> {
-                            log.error("Role '{}' not found.", userRequest.getRoleName());
-                            return Mono.error(new IllegalArgumentException("Role not found"));
-                        }))
-                        .flatMap(role -> {
-                            User userToCreate = UserDataMapper.toUser(userRequest);
-                            userToCreate.setRole(role);
-                            return userUseCase.createUser(userToCreate);
-                        })
-                        .map(UserDataMapper::toUserResponse)
-                        .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
-                        .doOnSuccess(user -> log.info("User created successfully"))
-                        .doOnError(e -> log.error("Failed to create user: {}", e.getMessage()))
-                );
+                .flatMap(userRequest -> {
+                    var userToCreate = UserDataMapper.toUser(userRequest);
+                    var role = Role.builder().names(userRequest.getRoleName()).build();
+                    userToCreate.setRole(role);
+                    return userUseCase.createUser(userToCreate);
+                })
+                .map(UserDataMapper::toUserResponse)
+                .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
+                .doOnSuccess(user -> log.info("User created successfully"))
+                .doOnError(e -> log.error("Failed to create user: {}", e.getMessage()));
     }
 }
