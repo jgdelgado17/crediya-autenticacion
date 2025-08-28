@@ -1,11 +1,17 @@
 package co.com.crediya.autenticacion.config;
 
+import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
+import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
+import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
+import co.com.crediya.autenticacion.usecase.user.UserUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class UseCasesConfigTest {
 
@@ -33,6 +39,28 @@ public class UseCasesConfigTest {
         @Bean
         public MyUseCase myUseCase() {
             return new MyUseCase();
+        }
+
+        @Bean
+        public RoleRepository roleRepository() {
+            return mock(RoleRepository.class);
+        }
+
+        @Bean
+        public RoleUseCase roleUseCase(RoleRepository roleRepository) {
+            // Spring inyectará el bean roleRepository() aquí
+            return new RoleUseCase(roleRepository);
+        }
+
+        @Bean
+        public UserRepository userRepository() {
+            return mock(UserRepository.class);
+        }
+
+        @Bean
+        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository) {
+            // Spring inyectará ambos beans, UserRepository y RoleRepository, aquí
+            return new UserUseCase(userRepository, roleRepository);
         }
     }
 

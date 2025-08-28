@@ -4,7 +4,6 @@ import co.com.crediya.autenticacion.api.dto.RoleRequest;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.model.role.Role;
-import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
 import org.junit.jupiter.api.Test;
