@@ -1,8 +1,14 @@
 package co.com.crediya.autenticacion.model.shared.exception;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ErrorMessagesTest {
+
+    @BeforeEach
+    void setUp() {
+        ErrorMessages errorMessages = new ErrorMessages();
+    }
 
     @Test
     void shouldReturnNotFoundMessage() {

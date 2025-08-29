@@ -15,7 +15,7 @@ public class RoleUseCase {
      * <p>If a role with the given name already exists, the method will return an error.
      *
      * @param role the role to create
-     * @return a mono emitting the created role
+     * @return mono emitting the created role
      */
     public Mono<Role> createRole(Role role) {
         return RoleValidator.validate(role)
@@ -24,7 +24,7 @@ public class RoleUseCase {
                                 .flatMap(existingRole ->
                                         Mono.error(new IllegalArgumentException("Role already exists")).cast(Role.class)
                                 )
-                                .switchIfEmpty(roleRepository.save(validRole))
+                                .switchIfEmpty(Mono.defer(() -> roleRepository.save(validRole)))
                 );
     }
 

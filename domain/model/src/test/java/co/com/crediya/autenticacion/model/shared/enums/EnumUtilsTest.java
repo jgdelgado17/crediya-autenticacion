@@ -2,6 +2,7 @@ package co.com.crediya.autenticacion.model.shared.enums;
 
 import co.com.crediya.autenticacion.model.role.RoleEnum;
 import co.com.crediya.autenticacion.model.shared.exception.ErrorMessages;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -10,6 +11,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EnumUtilsTest {
+
+    @BeforeEach
+    void setUp() {
+        EnumUtils enumUtils = new EnumUtils();
+    }
 
     @Test
     void shouldReturnCorrectEnumWhenValidAdminStringIsProvided() {
