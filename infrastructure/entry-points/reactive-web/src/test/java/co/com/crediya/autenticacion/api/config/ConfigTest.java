@@ -2,11 +2,6 @@ package co.com.crediya.autenticacion.api.config;
 
 import co.com.crediya.autenticacion.api.Handler;
 import co.com.crediya.autenticacion.api.RouterRest;
-import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
-import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
-import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
-import co.com.crediya.autenticacion.usecase.user.UserUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -14,13 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class})

@@ -4,7 +4,6 @@ import co.com.crediya.autenticacion.api.dto.RoleRequest;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
-import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
@@ -65,12 +64,8 @@ public class Handler {
                         throw new IllegalArgumentException(fullErrorMessage);
                     }
                 })
-                .flatMap(userRequest -> {
-                    var userToCreate = UserDataMapper.toUser(userRequest);
-                    var role = Role.builder().names(userRequest.getRoleName()).build();
-                    userToCreate.setRole(role);
-                    return userUseCase.createUser(userToCreate);
-                })
+                .map(UserDataMapper::toUser)
+                .flatMap(userUseCase::createUser)
                 .map(UserDataMapper::toUserResponse)
                 .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
                 .doOnSuccess(user -> log.info("User created successfully"))

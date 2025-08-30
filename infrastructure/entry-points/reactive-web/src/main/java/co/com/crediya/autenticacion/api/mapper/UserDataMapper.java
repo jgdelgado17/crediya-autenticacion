@@ -2,6 +2,7 @@ package co.com.crediya.autenticacion.api.mapper;
 
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.dto.UserResponse;
+import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.model.user.User;
 
 public class UserDataMapper {
@@ -13,6 +14,7 @@ public class UserDataMapper {
                 .documentNumber(userRequest.getDocumentNumber())
                 .phoneNumber(userRequest.getPhoneNumber())
                 .baseSalary(userRequest.getBaseSalary())
+                .role(Role.builder().names(userRequest.getRoleName()).build())
                 .build();
     }
 
@@ -25,7 +27,7 @@ public class UserDataMapper {
                 user.getDocumentNumber(),
                 user.getPhoneNumber(),
                 user.getBaseSalary(),
-                user.getRole() != null ? user.getRole().getNames() : null
+                user.getRole() != null ? user.getRole().getNames() : ""
         );
     }
 }
