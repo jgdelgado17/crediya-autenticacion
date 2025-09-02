@@ -34,7 +34,8 @@ public class RoleAdapter
         log.info("Saving role entity: {}", role.getNames());
         return super.save(role)
                 .doOnSuccess(r -> log.info("Role entity saved successfully: {}", r.getNames()))
-                .doOnError(e -> log.error("Error saving role entity: {}", e.getMessage()));
+                .doOnError(e -> log.error("Error saving role entity {} : {}", role.getNames(), e.getMessage()))
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 
     /**
@@ -48,13 +49,8 @@ public class RoleAdapter
         log.info("Finding role entity by name: {}", name);
         return repository.findByNames(name)
                 .map(super::toEntity)
-                .doOnSuccess(r -> {
-                    if (r != null) {
-                        log.info("Role entity found: {}", r.getNames());
-                    } else {
-                        log.info("No role entity found with name: {}", name);
-                    }
-                })
-                .doOnError(e -> log.error("Error finding role entity by name: {}", e.getMessage()));
+                .switchIfEmpty(Mono.fromRunnable(() -> log.warn("Role not found for name: {}", name)))
+                .doOnError(e -> log.error("Error finding role entity by name {} : {}", name, e.getMessage()))
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 }

@@ -38,25 +38,24 @@ public class UserAdapter implements UserRepository {
         return userRepository.save(userMapper.toEntity(user))
                 .flatMap(this::buildUserModel)
                 .doOnSuccess(u -> log.info("User entity saved successfully with ID: {}", u.getIdUser()))
-                .doOnError(e -> log.error("Failed to save user entity for email {}: {}", user.getEmail(), e.getMessage()));
+                .doOnError(e -> log.error("Failed to save user entity for email {}: {}", user.getEmail(), e.getMessage()))
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 
     /**
      * Finds a user by their email.
      *
      * @param email the email of the user to find
-     * @return a mono emitting the found user, or empty if not found
+     * @return mono emitting the found user, or empty if not found
      */
     @Override
     public Mono<User> findByEmail(String email) {
         log.info("Finding user entity by email: {}", email);
         return userRepository.findByEmail(email)
                 .flatMap(this::buildUserModel)
+                .switchIfEmpty(Mono.fromRunnable(() -> log.warn("User not found for email: {}", email)))
                 .doOnError(e -> log.error("Failed to find user by email {}: {}", email, e.getMessage()))
-                .switchIfEmpty(Mono.defer(() -> {
-                    log.warn("User not found for email: {}", email);
-                    return Mono.empty();
-                }));
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 
     private Mono<User> buildUserModel(UserEntity userEntity) {
