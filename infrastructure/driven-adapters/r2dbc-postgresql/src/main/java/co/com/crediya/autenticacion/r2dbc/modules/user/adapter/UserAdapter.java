@@ -70,6 +70,7 @@ public class UserAdapter implements UserRepository {
                 .map(roleMapper::toDomain)
                 .map(role -> userMapper.toModel(userEntity, role))
                 .doOnSuccess(user -> log.debug("User model built successfully for user ID: {}", user.getIdUser()))
-                .doOnError(e -> log.error("Failed to build user model for user ID {}: {}", userEntity.getIdUser(), e.getMessage()));
+                .doOnError(e -> log.error("Failed to build user model for user ID {}: {}", userEntity.getIdUser(), e.getMessage()))
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 }
