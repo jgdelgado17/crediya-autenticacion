@@ -50,6 +50,7 @@ public class RoleAdapter
         return repository.findByNames(name)
                 .map(super::toEntity)
                 .switchIfEmpty(Mono.fromRunnable(() -> log.warn("Role not found for name: {}", name)))
+                .doOnSuccess(r -> log.info("Role entity found successfully: {}", r.getNames()))
                 .doOnError(e -> log.error("Error finding role entity by name {} : {}", name, e.getMessage()))
                 .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
