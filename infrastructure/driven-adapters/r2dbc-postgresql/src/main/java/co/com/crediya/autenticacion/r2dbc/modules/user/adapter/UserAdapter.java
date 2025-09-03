@@ -54,7 +54,6 @@ public class UserAdapter implements UserRepository {
         return userRepository.findByEmail(email)
                 .flatMap(this::buildUserModel)
                 .switchIfEmpty(Mono.fromRunnable(() -> log.warn("User not found for email: {}", email)))
-                .doOnSuccess(u -> log.info("User entity found successfully with ID: {}", u.getIdUser()))
                 .doOnError(e -> log.error("Failed to find user by email {}: {}", email, e.getMessage()))
                 .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }

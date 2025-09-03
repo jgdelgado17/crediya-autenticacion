@@ -8,6 +8,7 @@ public record UserResponse(
         String documentNumber,
         String phoneNumber,
         Float baseSalary,
-        String roleName
+        String roleName,
+        Integer roleId
 ) {
 }

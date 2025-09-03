@@ -34,7 +34,7 @@ public class RoleAdapter
         log.info("Saving role entity: {}", role.getNames());
         return super.save(role)
                 .doOnSuccess(r -> log.info("Role entity saved successfully: {}", r.getNames()))
-                .doOnError(e -> log.error("Error saving role entity {} : {}", role.getNames(), e.getMessage()))
+                .doOnError(e -> log.error("Error saving role entity : {}", e.getMessage()))
                 .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 

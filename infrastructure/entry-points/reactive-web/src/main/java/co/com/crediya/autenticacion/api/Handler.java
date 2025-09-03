@@ -71,4 +71,14 @@ public class Handler {
                 .doOnSuccess(user -> log.info("User created successfully"))
                 .doOnError(e -> log.error("Failed to create user: {}", e.getMessage()));
     }
+
+    public Mono<ServerResponse> findUserByEmail(ServerRequest request) {
+        String email = request.pathVariable("email");
+        log.info("Request received to find user by email: {}", email);
+        return userUseCase.findByEmail(email)
+                .map(UserDataMapper::toUserResponse)
+                .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
+                .doOnSuccess(user -> log.info("User retrieved successfully"))
+                .doOnError(e -> log.error("Failed to retrieve user: {}", e.getMessage()));
+    }
 }

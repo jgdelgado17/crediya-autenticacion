@@ -27,7 +27,8 @@ public class UserDataMapper {
                 user.getDocumentNumber(),
                 user.getPhoneNumber(),
                 user.getBaseSalary(),
-                user.getRole() != null ? user.getRole().getNames() : ""
+                user.getRole() != null ? user.getRole().getNames() : "",
+                user.getRole() != null ? user.getRole().getId() : null
         );
     }
 }
