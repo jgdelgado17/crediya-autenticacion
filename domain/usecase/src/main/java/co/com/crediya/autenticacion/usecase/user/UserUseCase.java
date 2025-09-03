@@ -23,17 +23,26 @@ public class UserUseCase {
      * @return a mono emitting the created user
      */
     public Mono<User> createUser(User user) {
-        return userRepository.findByEmail(user.getEmail())
-                .flatMap(existingUser ->
-                        Mono.error(new IllegalArgumentException("User with email " + user.getEmail() + " already exists")).cast(User.class)
-                )
-                .switchIfEmpty(
-                        roleRepository.findByName(user.getRole().getNames())
-                                .switchIfEmpty(Mono.error(new IllegalArgumentException(ErrorMessages.notFoundMessage(Role.class, user.getRole().getNames()))))
-                                .flatMap(role -> {
-                                    user.setRole(role);
-                                    return userRepository.save(user);
-                                })
+        return ValidateUser.validateUser(user.getEmail())
+                .flatMap(email ->
+                        userRepository.findByEmail(user.getEmail())
+                                .flatMap(existingUser ->
+                                        Mono.error(new IllegalArgumentException("User with email " + user.getEmail() + " already exists")).cast(User.class)
+                                )
+                                .switchIfEmpty(
+                                        roleRepository.findByName(user.getRole().getNames())
+                                                .switchIfEmpty(Mono.error(new IllegalArgumentException(ErrorMessages.notFoundMessage(Role.class, user.getRole().getNames()))))
+                                                .flatMap(role -> {
+                                                    user.setRole(role);
+                                                    return userRepository.save(user);
+                                                })
+                                )
+
                 );
+    }
+
+    public Mono<User> findByEmail(String email) {
+        return ValidateUser.validateUser(email)
+                .flatMap(userRepository::findByEmail);
     }
 }
