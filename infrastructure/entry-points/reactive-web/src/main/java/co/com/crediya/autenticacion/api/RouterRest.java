@@ -3,9 +3,13 @@ package co.com.crediya.autenticacion.api;
 import co.com.crediya.autenticacion.api.dto.RoleRequest;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.dto.UserResponse;
+import co.com.crediya.autenticacion.api.exceptionHandler.GlobalErrorWebExceptionHandler;
 import co.com.crediya.autenticacion.model.role.Role;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,7 +47,29 @@ public class RouterRest {
                                     description = "Role request",
                                     required = true,
                                     content = @Content(
-                                            schema = @Schema(implementation = RoleRequest.class))
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = RoleRequest.class),
+                                            examples = {
+                                                    @ExampleObject(
+                                                            name = "Example Role ADMIN",
+                                                            summary = "Example for ADMIN role",
+                                                            value = "{\"name\": \"ADMIN\", " +
+                                                                    "\"description\": \"Administrator role\"}"
+                                                    ),
+                                                    @ExampleObject(
+                                                            name = "Example Role ADVISOR",
+                                                            summary = "Example for ADVISOR role",
+                                                            value = "{\"name\": \"ADVISOR\", " +
+                                                                    "\"description\": \"Advisor role\"}"
+                                                    ),
+                                                    @ExampleObject(
+                                                            name = "Example Role CLIENT",
+                                                            summary = "Example for CLIENT role",
+                                                            value = "{\"name\": \"CLIENT\", " +
+                                                                    "\"description\": \"Client role\"}"
+                                                    )
+                                            }
+                                    )
                             ),
                             responses = {
                                     @ApiResponse(
@@ -97,6 +123,47 @@ public class RouterRest {
                                             responseCode = "500",
                                             description = "Internal server error",
                                             content = @Content(schema = @Schema(implementation = Error.class))
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/{email}",
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "findUserByEmail",
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE
+                    },
+                    operation = @Operation(
+                            summary = "Find user by email",
+                            description = "Finds a user by email in the system",
+                            tags = "User",
+                            operationId = "findUserByEmail",
+                            parameters = {
+                                    @Parameter(
+                                            name = "email",
+                                            in = ParameterIn.PATH,
+                                            description = "User's email to search for",
+                                            required = true,
+                                            example = "user@example.com"
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "User found successfully",
+                                            content = @Content(schema = @Schema(implementation = UserResponse.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "User not found",
+                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Internal server error",
+                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
                                     )
                             }
                     )
