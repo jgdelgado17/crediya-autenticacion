@@ -2,6 +2,7 @@ package co.com.crediya.autenticacion.r2dbc.modules.user.adapter;
 
 import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.model.shared.exception.ErrorMessages;
+import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
 import co.com.crediya.autenticacion.r2dbc.modules.role.mapper.RoleMapper;
@@ -64,7 +65,7 @@ public class UserAdapter implements UserRepository {
                 .switchIfEmpty(Mono.defer(() -> {
                     String errorMessage = ErrorMessages.notFoundMessage(Role.class, userEntity.getIdRole());
                     log.error("Role not found for user ID {}: {}", userEntity.getIdUser(), errorMessage);
-                    return Mono.error(new IllegalArgumentException(errorMessage));
+                    return Mono.error(new RecordNotFoundException(errorMessage));
                 }))
                 .doOnSuccess(roleEntity -> log.debug("Role entity found for user ID {}: {}", userEntity.getIdUser(), roleEntity.getNames()))
                 .map(roleMapper::toDomain)

@@ -3,6 +3,7 @@ package co.com.crediya.autenticacion.usecase.user;
 import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.model.shared.exception.ErrorMessages;
+import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class UserUseCase {
                                 )
                                 .switchIfEmpty(
                                         roleRepository.findByName(user.getRole().getNames())
-                                                .switchIfEmpty(Mono.error(new IllegalArgumentException(ErrorMessages.notFoundMessage(Role.class, user.getRole().getNames()))))
+                                                .switchIfEmpty(Mono.error(new RecordNotFoundException(ErrorMessages.notFoundMessage(Role.class, user.getRole().getNames()))))
                                                 .flatMap(role -> {
                                                     user.setRole(role);
                                                     return userRepository.save(user);
