@@ -3,6 +3,7 @@ package co.com.crediya.autenticacion.usecase.user;
 import co.com.crediya.autenticacion.model.role.Role;
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
 import co.com.crediya.autenticacion.model.shared.exception.ErrorMessages;
+import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,7 +145,7 @@ class UserUseCaseTest {
         // Assert
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
-                        throwable instanceof IllegalArgumentException &&
+                        throwable instanceof RecordNotFoundException &&
                                 throwable.getMessage().equals(expectedMessage)
                 )
                 .verify();
@@ -175,7 +176,7 @@ class UserUseCaseTest {
         // Assert
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
-                        throwable instanceof IllegalArgumentException &&
+                        throwable instanceof RecordNotFoundException &&
                                 throwable.getMessage().equals(expectedMessage)
                 )
                 .verify();

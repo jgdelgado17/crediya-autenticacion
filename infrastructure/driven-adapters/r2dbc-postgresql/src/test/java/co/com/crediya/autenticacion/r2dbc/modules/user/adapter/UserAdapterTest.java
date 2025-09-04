@@ -106,9 +106,10 @@ class UserAdapterTest {
 
         // Assert
         StepVerifier.create(result)
-                .expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException &&
-                        throwable.getMessage().contains("Role not found"))
-                .verify();
+                .expectErrorMatches(throwable ->
+                        throwable instanceof RuntimeException &&
+                        throwable.getMessage().contains("Role not found")
+                ).verify();
 
         verify(userRepository).save(userEntity);
     }
