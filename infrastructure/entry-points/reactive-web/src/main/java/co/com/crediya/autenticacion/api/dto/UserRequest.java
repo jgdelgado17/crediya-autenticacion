@@ -24,4 +24,6 @@ public class UserRequest {
     private Float baseSalary;
     @NotBlank(message = "Role name is mandatory")
     private String roleName;
+    @NotBlank(message = "Password is required")
+    private String password;
 }

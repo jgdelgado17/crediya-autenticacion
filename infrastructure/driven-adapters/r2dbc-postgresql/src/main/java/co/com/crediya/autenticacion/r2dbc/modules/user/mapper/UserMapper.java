@@ -17,6 +17,7 @@ public class UserMapper {
                 .phoneNumber(user.getPhoneNumber())
                 .baseSalary(user.getBaseSalary())
                 .idRole(user.getRole().getId())
+                .passcode(user.getPassword())
                 .build();
     }
 
@@ -30,6 +31,7 @@ public class UserMapper {
                 .phoneNumber(userEntity.getPhoneNumber())
                 .baseSalary(userEntity.getBaseSalary())
                 .role(role)
+                .password(userEntity.getPasscode())
                 .build();
     }
 }

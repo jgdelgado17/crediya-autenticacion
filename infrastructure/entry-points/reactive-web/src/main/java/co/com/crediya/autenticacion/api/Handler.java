@@ -1,9 +1,13 @@
 package co.com.crediya.autenticacion.api;
 
+import co.com.crediya.autenticacion.api.dto.LoginRequest;
+import co.com.crediya.autenticacion.api.dto.LoginResponse;
 import co.com.crediya.autenticacion.api.dto.RoleRequest;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
+import co.com.crediya.autenticacion.model.securityports.JwtPort;
+import co.com.crediya.autenticacion.usecase.login.LoginUseCase;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,8 @@ public class Handler {
     private final Validator validator;
     private final RoleUseCase roleUseCase;
     private final UserUseCase userUseCase;
+    private final LoginUseCase loginUseCase;
+    private final JwtPort jwtPort;
 
     public Mono<ServerResponse> createRole(ServerRequest request) {
         log.info("Request received to create role");
@@ -80,5 +86,28 @@ public class Handler {
                 .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
                 .doOnSuccess(user -> log.info("User retrieved successfully"))
                 .doOnError(e -> log.error("Failed to retrieve user: {}", e.getMessage()));
+    }
+
+    public Mono<ServerResponse> login(ServerRequest request) {
+        log.info("Request received to login");
+        return request.bodyToMono(LoginRequest.class)
+                .doOnSuccess(loginRequest -> log.info("Login request received for: {}", loginRequest.getEmail()))
+                .doOnNext(loginRequest -> {
+                    BeanPropertyBindingResult errors = new BeanPropertyBindingResult(loginRequest, "loginRequest");
+                    validator.validate(loginRequest, errors);
+                    if (errors.hasErrors()) {
+                        List<String> errorMessages = errors.getAllErrors().stream()
+                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                                .collect(Collectors.toList());
+                        String fullErrorMessage = "Validation failed: " + String.join(", ", errorMessages);
+                        throw new IllegalArgumentException(fullErrorMessage);
+                    }
+                })
+                .flatMap(dto -> loginUseCase.validateCredentials(dto.getEmail(), dto.getPassword()))
+                .flatMap(user -> jwtPort.generateToken(user.getEmail(), user.getRole().getNames())
+                        .map(token -> new LoginResponse(user, token)))
+                .flatMap(loginResponse -> ServerResponse.ok().bodyValue(loginResponse))
+                .doOnSuccess(loginResponse -> log.info("Login successful"))
+                .doOnError(e -> log.error("Failed to login: {}", e.getMessage()));
     }
 }

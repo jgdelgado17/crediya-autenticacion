@@ -1,5 +1,6 @@
 package co.com.crediya.autenticacion.api.exceptionHandler;
 
+import co.com.crediya.autenticacion.model.shared.exception.AuthenticationUnauthorizedException;
 import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
@@ -45,7 +46,10 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         String errorMessage = "Internal Server Error";
 
-        if (error instanceof RecordNotFoundException){
+        if (error instanceof AuthenticationUnauthorizedException) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+            errorMessage = error.getMessage();
+        } else if (error instanceof RecordNotFoundException){
             httpStatus = HttpStatus.NOT_FOUND;
             errorMessage = error.getMessage();
         } else if (error instanceof WebExchangeBindException bindException) {
