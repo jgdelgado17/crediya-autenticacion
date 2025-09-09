@@ -4,7 +4,10 @@ import co.com.crediya.autenticacion.api.dto.LoginRequest;
 import co.com.crediya.autenticacion.api.dto.LoginResponse;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.dto.UserResponse;
+import co.com.crediya.autenticacion.api.exceptionHandler.GlobalErrorWebExceptionHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -110,12 +114,53 @@ public class RouterRest {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/{email}",
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "findUserByEmail",
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE
+                    },
+                    operation = @Operation(
+                            summary = "Find user by email",
+                            description = "Finds a user by email in the system",
+                            tags = "User",
+                            operationId = "findUserByEmail",
+                            parameters = {
+                                    @Parameter(
+                                            name = "email",
+                                            in = ParameterIn.PATH,
+                                            description = "User's email to search for",
+                                            required = true,
+                                            example = "user@example.com"
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "User found successfully",
+                                            content = @Content(schema = @Schema(implementation = UserResponse.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "User not found",
+                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Internal server error",
+                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                                    )
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/users"), handler::createUser)
                 //.andRoute(POST("/api/v1/role"), handler::createRole)
-                //.andRoute(GET("/api/v1/users/{email}"), handler::findUserByEmail)
+                .andRoute(GET("/api/v1/users/{email}"), handler::findUserByEmail)
                 .andRoute(POST("/api/v1/login"), handler::login);
     }
 }

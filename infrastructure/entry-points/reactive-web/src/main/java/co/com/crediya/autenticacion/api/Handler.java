@@ -7,6 +7,7 @@ import co.com.crediya.autenticacion.api.dto.UserRequest;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
 import co.com.crediya.autenticacion.model.securityports.JwtPort;
+import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import co.com.crediya.autenticacion.usecase.login.LoginUseCase;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
@@ -83,6 +84,7 @@ public class Handler {
         log.info("Request received to find user by email: {}", email);
         return userUseCase.findByEmail(email)
                 .map(UserDataMapper::toUserResponse)
+                .switchIfEmpty(Mono.error(new RecordNotFoundException("User not found")))
                 .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
                 .doOnSuccess(user -> log.info("User retrieved successfully"))
                 .doOnError(e -> log.error("Failed to retrieve user: {}", e.getMessage()));
