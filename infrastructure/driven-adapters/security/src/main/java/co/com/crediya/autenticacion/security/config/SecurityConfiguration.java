@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,18 +33,6 @@ public class SecurityConfiguration {
     private final SecurityContextRepository securityContextRepository;
     private final ObjectMapper objectMapper;
 
-    @Value("${routes.paths.login}")
-    private String loginPath;
-
-    @Value("${routes.paths.roles}")
-    private String rolePath;
-
-    @Value("${routes.paths.users}")
-    private String userPath;
-
-    @Value("${routes.paths.findUserByEmail}")
-    private String userByEmailPath;
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
@@ -59,11 +46,11 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(this::accessDeniedHandler)
                 )
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.POST, loginPath).permitAll()
+                .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
                 .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**").permitAll()
-                .pathMatchers(HttpMethod.POST, rolePath).hasRole("ADMIN")
-                .pathMatchers(HttpMethod.POST, userPath).hasAnyRole("ADMIN", "ADVISOR")
-                .pathMatchers(HttpMethod.GET, userByEmailPath).hasAnyRole("ADMIN", "ADVISOR")
+                .pathMatchers(HttpMethod.POST, "/api/v1/role").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISOR")
+                .pathMatchers(HttpMethod.GET, "/api/v1/users/{email}").hasAnyRole("ADMIN", "ADVISOR")
                 .anyExchange().authenticated()
                 .and()
                 .build();

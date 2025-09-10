@@ -31,14 +31,13 @@ management:
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 
+paths:
+  login: "api/v1/login"
+  roles: "api/v1/role"
+  users: "api/v1/users"
+  findUserByEmail: "api/v1/users/{email}"
+
 security:
   jwt:
     secret: "g4T7sP9xL2hR8qW1nF5kM3jA6bC0yE4d"
     expiration: 3000
-
-routes:
-  paths:
-    login: "/api/v1/login"
-    roles: "/api/v1/role"
-    users: "/api/v1/users"
-    findUserByEmail: "/api/v1/users/{email}"

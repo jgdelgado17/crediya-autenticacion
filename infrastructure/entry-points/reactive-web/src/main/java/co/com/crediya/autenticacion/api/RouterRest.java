@@ -1,6 +1,5 @@
 package co.com.crediya.autenticacion.api;
 
-import co.com.crediya.autenticacion.api.config.PathsConfig;
 import co.com.crediya.autenticacion.api.dto.LoginRequest;
 import co.com.crediya.autenticacion.api.dto.LoginResponse;
 import co.com.crediya.autenticacion.api.dto.UserRequest;
@@ -13,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +26,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-@RequiredArgsConstructor
 public class RouterRest {
-
-    private final PathsConfig pathsConfig;
 
     @Bean
     @RouterOperations({
@@ -164,9 +159,9 @@ public class RouterRest {
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST(pathsConfig.users()), handler::createUser)
+        return route(POST("/api/v1/users"), handler::createUser)
                 //.andRoute(POST(pathsConfig.roles()), handler::createRole)
-                .andRoute(GET(pathsConfig.findUserByEmail()), handler::findUserByEmail)
-                .andRoute(POST(pathsConfig.login()), handler::login);
+                .andRoute(GET("/api/v1/users/{email}"), handler::findUserByEmail)
+                .andRoute(POST("/api/v1/login"), handler::login);
     }
 }
