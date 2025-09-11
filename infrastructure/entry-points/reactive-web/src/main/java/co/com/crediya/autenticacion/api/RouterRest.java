@@ -1,18 +1,6 @@
 package co.com.crediya.autenticacion.api;
 
 import co.com.crediya.autenticacion.api.config.PathsConfig;
-import co.com.crediya.autenticacion.api.dto.LoginRequest;
-import co.com.crediya.autenticacion.api.dto.LoginResponse;
-import co.com.crediya.autenticacion.api.dto.UserRequest;
-import co.com.crediya.autenticacion.api.dto.UserResponse;
-import co.com.crediya.autenticacion.api.exceptionHandler.GlobalErrorWebExceptionHandler;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
@@ -41,46 +29,7 @@ public class RouterRest {
                     beanMethod = "createUser",
                     produces = {
                             MediaType.APPLICATION_JSON_VALUE
-                    },
-                    operation = @Operation(
-                            summary = "Create user",
-                            description = "Creates a new user in the system",
-                            tags = "User",
-                            operationId = "createUser",
-                            requestBody = @RequestBody(
-                                    description = "User request",
-                                    required = true,
-                                    content = @Content(
-                                            schema = @Schema(implementation = UserRequest.class))
-                            ),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "201",
-                                            description = "User created successfully",
-                                            content = @Content(schema = @Schema(implementation = UserResponse.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "400",
-                                            description = "Invalid input data",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "401",
-                                            description = "Unauthorized",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "403",
-                                            description = "Forbidden",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "500",
-                                            description = "Internal server error",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    )
-                            }
-                    )
+                    }
             ),
             @RouterOperation(
                     path = "/api/v1/login",
@@ -89,37 +38,7 @@ public class RouterRest {
                     beanMethod = "login",
                     produces = {
                             MediaType.APPLICATION_JSON_VALUE
-                    },
-                    operation = @Operation(
-                            summary = "Login user",
-                            description = "Logs in a user",
-                            tags = "User",
-                            operationId = "login",
-                            requestBody = @RequestBody(
-                                    description = "Login request",
-                                    required = true,
-                                    content = @Content(
-                                            schema = @Schema(implementation = LoginRequest.class)
-                                    )
-                            ),
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "User logged in successfully",
-                                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "401",
-                                            description = "Unauthorized",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "500",
-                                            description = "Internal server error",
-                                            content = @Content(schema = @Schema(implementation = Error.class))
-                                    )
-                            }
-                    )
+                    }
             ),
             @RouterOperation(
                     path = "/api/v1/users/{email}",
@@ -128,39 +47,7 @@ public class RouterRest {
                     beanMethod = "findUserByEmail",
                     produces = {
                             MediaType.APPLICATION_JSON_VALUE
-                    },
-                    operation = @Operation(
-                            summary = "Find user by email",
-                            description = "Finds a user by email in the system",
-                            tags = "User",
-                            operationId = "findUserByEmail",
-                            parameters = {
-                                    @Parameter(
-                                            name = "email",
-                                            in = ParameterIn.PATH,
-                                            description = "User's email to search for",
-                                            required = true,
-                                            example = "user@example.com"
-                                    )
-                            },
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "User found successfully",
-                                            content = @Content(schema = @Schema(implementation = UserResponse.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "404",
-                                            description = "User not found",
-                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "500",
-                                            description = "Internal server error",
-                                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
-                                    )
-                            }
-                    )
+                    }
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {

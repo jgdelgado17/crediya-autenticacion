@@ -1,9 +1,7 @@
 package co.com.crediya.autenticacion.api;
 
-import co.com.crediya.autenticacion.api.dto.LoginRequest;
-import co.com.crediya.autenticacion.api.dto.LoginResponse;
-import co.com.crediya.autenticacion.api.dto.RoleRequest;
-import co.com.crediya.autenticacion.api.dto.UserRequest;
+import co.com.crediya.autenticacion.api.dto.*;
+import co.com.crediya.autenticacion.api.exceptionHandler.GlobalErrorWebExceptionHandler;
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
 import co.com.crediya.autenticacion.model.securityports.JwtPort;
@@ -11,6 +9,13 @@ import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundExcepti
 import co.com.crediya.autenticacion.usecase.login.LoginUseCase;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +61,45 @@ public class Handler {
                 .doOnError(e -> log.error("Failed to create role: {}", e.getMessage()));
     }
 
+    @Operation(
+            summary = "Create user",
+            description = "Creates a new user in the system",
+            tags = "User",
+            operationId = "createUser",
+            requestBody = @RequestBody(
+                    description = "User request",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = UserRequest.class))
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User created successfully",
+                            content = @Content(schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    )
+            }
+    )
     public Mono<ServerResponse> createUser(ServerRequest request) {
         log.info("Request received to create user");
         return request.bodyToMono(UserRequest.class)
@@ -79,6 +123,53 @@ public class Handler {
                 .doOnError(e -> log.error("Failed to create user: {}", e.getMessage()));
     }
 
+    @Operation(
+            summary = "Find user by email",
+            description = "Finds a user by email in the system",
+            tags = "User",
+            operationId = "findUserByEmail",
+            parameters = {
+                    @Parameter(
+                            name = "email",
+                            in = ParameterIn.PATH,
+                            description = "User's email to search for",
+                            required = true,
+                            example = "user@example.com"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User found successfully",
+                            content = @Content(schema = @Schema(implementation = UserResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data",
+                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = GlobalErrorWebExceptionHandler.class))
+                    )
+            }
+    )
     public Mono<ServerResponse> findUserByEmail(ServerRequest request) {
         String email = request.pathVariable("email");
         log.info("Request received to find user by email: {}", email);
@@ -90,6 +181,36 @@ public class Handler {
                 .doOnError(e -> log.error("Failed to retrieve user: {}", e.getMessage()));
     }
 
+    @Operation(
+            summary = "Login user",
+            description = "Logs in a user",
+            tags = "User",
+            operationId = "login",
+            requestBody = @RequestBody(
+                    description = "Login request",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = LoginRequest.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User logged in successfully",
+                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = Error.class))
+                    )
+            }
+    )
     public Mono<ServerResponse> login(ServerRequest request) {
         log.info("Request received to login");
         return request.bodyToMono(LoginRequest.class)
