@@ -32,6 +32,7 @@ public class SecurityConfiguration {
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
     private final ObjectMapper objectMapper;
+    private final PathsConfig pathsConfig;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -46,11 +47,11 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(this::accessDeniedHandler)
                 )
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
+                .pathMatchers(HttpMethod.POST, pathsConfig.login()).permitAll()
                 .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**").permitAll()
-                .pathMatchers(HttpMethod.POST, "/api/v1/role").hasRole("ADMIN")
-                .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISOR")
-                .pathMatchers(HttpMethod.GET, "/api/v1/users/{email}").hasAnyRole("ADMIN", "ADVISOR")
+                .pathMatchers(HttpMethod.POST, pathsConfig.roles()).hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, pathsConfig.users()).hasAnyRole("ADMIN", "ADVISOR")
+                .pathMatchers(HttpMethod.GET, pathsConfig.findUserByEmail()).hasAnyRole("ADMIN", "ADVISOR")
                 .anyExchange().authenticated()
                 .and()
                 .build();

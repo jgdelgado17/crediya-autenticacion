@@ -13,11 +13,11 @@ spring:
     include: null
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 5432
-    username: "postgres"
-    password: "postgres"
-    database: "crediya_autentication"
+    host: "${DB_HOST}"
+    port: ${DB_PORT}
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
+    database: "${DB_DATABASE}"
     schema: "public"
 management:
   endpoints:
@@ -29,15 +29,15 @@ management:
       probes:
         enabled: true
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: "${CORS_ALLOWED_ORIGINS}"
 
 paths:
-  login: "api/v1/login"
-  roles: "api/v1/role"
-  users: "api/v1/users"
-  findUserByEmail: "api/v1/users/{email}"
+  login: "${PATHS_LOGIN}"
+  roles: "${PATHS_ROLES}"
+  users: "${PATHS_USERS}"
+  findUserByEmail: "${PATHS_FIND_USER_BY_EMAIL}"
 
 security:
   jwt:
-    secret: "g4T7sP9xL2hR8qW1nF5kM3jA6bC0yE4d"
+    secret: "${JWT_SECRET}"
     expiration: 3000
