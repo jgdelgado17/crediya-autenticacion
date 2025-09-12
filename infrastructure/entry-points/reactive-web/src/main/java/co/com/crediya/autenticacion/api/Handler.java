@@ -5,7 +5,6 @@ import co.com.crediya.autenticacion.api.exceptionHandler.GlobalErrorWebException
 import co.com.crediya.autenticacion.api.mapper.RoleDataMapper;
 import co.com.crediya.autenticacion.api.mapper.UserDataMapper;
 import co.com.crediya.autenticacion.model.securityports.JwtPort;
-import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundException;
 import co.com.crediya.autenticacion.usecase.login.LoginUseCase;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
@@ -27,6 +26,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -175,10 +175,36 @@ public class Handler {
         log.info("Request received to find user by email: {}", email);
         return userUseCase.findByEmail(email)
                 .map(UserDataMapper::toUserResponse)
-                .switchIfEmpty(Mono.error(new RecordNotFoundException("User not found")))
                 .flatMap(userResponse -> ServerResponse.ok().bodyValue(userResponse))
+                .switchIfEmpty(ServerResponse.notFound().build())
                 .doOnSuccess(user -> log.info("User retrieved successfully"))
                 .doOnError(e -> log.error("Failed to retrieve user: {}", e.getMessage()));
+    }
+
+    public Mono<ServerResponse> findUserByEmailIn(ServerRequest request) {
+        log.info("Request received to find users by emails");
+
+        List<String> emails = request.queryParam("emails")
+                .map(s -> List.of(s.split(",")))
+                .orElse(Collections.emptyList());
+
+        if (emails.isEmpty()) {
+            log.warn("No emails provided in the query parameter.");
+            return ServerResponse.ok().bodyValue(Collections.emptyList());
+        }
+
+        return userUseCase.findByEmailIn(emails)
+                .map(UserDataMapper::toUserResponse)
+                .collectList()
+                .flatMap(userResponses -> {
+                    if (userResponses.isEmpty()) {
+                        log.info("No users found for the given emails.");
+                        return ServerResponse.ok().bodyValue(Collections.emptyList());
+                    }
+                    return ServerResponse.ok().bodyValue(userResponses);
+                })
+                .doOnSuccess(serverResponse -> log.info("Users retrieved successfully"))
+                .doOnError(e -> log.error("Failed to retrieve users: {}", e.getMessage()));
     }
 
     @Operation(
