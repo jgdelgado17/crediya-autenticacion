@@ -20,4 +20,5 @@ public class User {
     private String phoneNumber;
     private Float baseSalary;
     private Role role;
+    private String password;
 }

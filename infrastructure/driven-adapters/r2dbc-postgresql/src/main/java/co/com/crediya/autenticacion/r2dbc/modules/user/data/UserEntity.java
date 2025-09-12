@@ -29,4 +29,5 @@ public class UserEntity {
     private Float baseSalary;
     @Column("id_role")
     private Integer idRole;
+    private String passcode;
 }

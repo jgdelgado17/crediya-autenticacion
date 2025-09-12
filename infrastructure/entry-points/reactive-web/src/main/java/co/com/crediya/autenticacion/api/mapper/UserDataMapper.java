@@ -15,6 +15,7 @@ public class UserDataMapper {
                 .phoneNumber(userRequest.getPhoneNumber())
                 .baseSalary(userRequest.getBaseSalary())
                 .role(Role.builder().names(userRequest.getRoleName()).build())
+                .password(userRequest.getPassword())
                 .build();
     }
 

@@ -1,36 +1,24 @@
--- Tabla 'status'
-CREATE TABLE IF NOT EXISTS status (
-    id SERIAL PRIMARY KEY,
-    names VARCHAR(50) UNIQUE NOT NULL,
+-- Creating the Role Table
+CREATE TABLE public.roles (
+    unique_id SERIAL PRIMARY KEY,
+    names VARCHAR(255) NOT NULL,
     description VARCHAR(255)
 );
 
--- Tabla 'type_loan'
-CREATE TABLE IF NOT EXISTS type_loan (
-    id SERIAL PRIMARY KEY,
-    names VARCHAR(50) UNIQUE NOT NULL,
-    min_amount NUMERIC(19, 2) NOT NULL,
-    max_amount NUMERIC(19, 2) NOT NULL,
-    interest_rate NUMERIC(5, 2) NOT NULL,
-    automatic_validation BOOLEAN
-);
-
--- Tabla 'requests'
-CREATE TABLE IF NOT EXISTS requests (
-    id SERIAL PRIMARY KEY,
-    amount NUMERIC(19, 2) NOT NULL,
-    term INTEGER NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    status INTEGER NOT NULL,
-    type_loan INTEGER NOT NULL,
-    CONSTRAINT fk_status
-        FOREIGN KEY (status)
-        REFERENCES status(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    CONSTRAINT fk_type_loan
-        FOREIGN KEY (type_loan)
-        REFERENCES type_loan(id)
+-- Creating the Users Table
+CREATE TABLE public.users (
+    id_user SERIAL PRIMARY KEY,
+    names VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    document_number VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    id_role INTEGER,
+    base_salary DECIMAL(10, 2),
+    passcode VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_id_role
+        FOREIGN KEY (id_role)
+        REFERENCES public.roles (unique_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
