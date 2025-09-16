@@ -8,7 +8,10 @@ import co.com.crediya.autenticacion.model.shared.exception.RecordNotFoundExcepti
 import co.com.crediya.autenticacion.model.user.User;
 import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserUseCase {
@@ -50,5 +53,9 @@ public class UserUseCase {
     public Mono<User> findByEmail(String email) {
         return ValidateUser.validateUser(email)
                 .flatMap(userRepository::findByEmail);
+    }
+
+    public Flux<User> findByEmailIn(List<String> emails) {
+        return userRepository.findByEmailIn(emails);
     }
 }

@@ -15,7 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +59,15 @@ public class UserAdapter implements UserRepository {
                 .flatMap(this::buildUserModel)
                 .switchIfEmpty(Mono.fromRunnable(() -> log.warn("User not found for email: {}", email)))
                 .doOnError(e -> log.error("Failed to find user by email {}: {}", email, e.getMessage()))
+                .onErrorMap(e -> new RuntimeException(e.getMessage()));
+    }
+
+    @Override
+    public Flux<User> findByEmailIn(List<String> emails) {
+        log.info("Finding user entities by emails: {}", emails);
+        return userRepository.findByEmailIn(emails)
+                .flatMap(this::buildUserModel)
+                .doOnError(e -> log.error("Failed to find user entities by emails {}: {}", emails, e.getMessage()))
                 .onErrorMap(e -> new RuntimeException(e.getMessage()));
     }
 

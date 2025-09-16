@@ -54,6 +54,7 @@ public class RouterRest {
         return route(POST(pathsConfig.users()), handler::createUser)
                 //.andRoute(POST(pathsConfig.roles()), handler::createRole)
                 .andRoute(GET(pathsConfig.findUserByEmail()), handler::findUserByEmail)
+                .andRoute(GET(pathsConfig.users()), handler::findUserByEmailIn)
                 .andRoute(POST(pathsConfig.login()), handler::login);
     }
 }
