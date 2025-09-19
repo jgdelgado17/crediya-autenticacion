@@ -1,6 +1,7 @@
 package co.com.crediya.autenticacion.config;
 
 import co.com.crediya.autenticacion.model.role.gateways.RoleRepository;
+import co.com.crediya.autenticacion.model.securityports.PasswordEncoderPort;
 import co.com.crediya.autenticacion.model.user.gateways.UserRepository;
 import co.com.crediya.autenticacion.usecase.role.RoleUseCase;
 import co.com.crediya.autenticacion.usecase.user.UserUseCase;
@@ -53,14 +54,19 @@ public class UseCasesConfigTest {
         }
 
         @Bean
+        public PasswordEncoderPort passwordEncoderPort() {
+            return mock(PasswordEncoderPort.class);
+        }
+
+        @Bean
         public UserRepository userRepository() {
             return mock(UserRepository.class);
         }
 
         @Bean
-        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository) {
+        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoderPort passwordEncoderPort) {
             // Spring inyectará ambos beans, UserRepository y RoleRepository, aquí
-            return new UserUseCase(userRepository, roleRepository);
+            return new UserUseCase(userRepository, roleRepository, passwordEncoderPort);
         }
     }
 
